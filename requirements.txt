@@ -1,0 +1,34 @@
+# ============================================================
+# Smart Calf Monitoring System - Bağımlılık Listesi
+# Python 3.11.9 uyumlu kararlı versiyonlar
+# Kurulum: pip install -r requirements.txt
+# ============================================================
+
+# --- Veri İşleme & Analiz ---
+pandas>=2.2.0,<2.3.0
+numpy>=1.26.0,<2.0.0
+openpyxl>=3.1.2,<3.2.0            # pandas .to_excel() için gerekli engine
+
+# --- Makine Öğrenmesi ---
+scikit-learn>=1.5.0,<1.6.0        # LinearRegression, MinMaxScaler, train_test_split
+tensorflow>=2.16.0,<2.18.0        # Keras LSTM modeli (keras artık tf içinde)
+
+# --- Görüntü İşleme & Bilgisayarlı Görü ---
+opencv-python>=4.10.0,<4.11.0     # cv2: Poligon çizimi, nokta testi, video işleme
+ultralytics>=8.3.0,<8.4.0         # YOLOv11 nesne tespiti ve ByteTrack takip
+
+# --- Grafik & Görselleştirme ---
+matplotlib>=3.9.0,<3.10.0         # Stres grafikleri, regresyon, LSTM tahmin çizimleri
+
+# --- Web Arayüzü (Streamlit Dashboard) ---
+streamlit>=1.38.0,<1.40.0         # Ana web arayüzü framework'ü
+streamlit-option-menu>=0.4.0      # Yan menü navigasyon bileşeni
+
+
+pip install labelImg
+
+# --- Ekstra Kutuphaneler ---
+pyyaml>=6.0.1
+pydantic>=2.0.0
+
+easyocr>=1.7.1

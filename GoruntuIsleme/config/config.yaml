@@ -1,0 +1,41 @@
+# ===== MODEL AYARLARI =====
+model:
+  weights_path: "runs/detect/buzagi_modelimiz_finetuned/weights/best.pt"
+  confidence: 0.25
+  tracker: "bytetrack.yaml"
+  device: "cpu"             # GPU varsa "cuda:0" yapılabilir
+
+# ===== KAMERA TANIMLARI =====
+cameras:
+  kamera_1:
+    source: "dataset/CFR-0322-TR-15/CFR-0322-TR-15"
+    type: "local_frames"
+    frame_pattern: "006_mp4-*.jpg"
+    zones_profile: "kamera_1"
+
+  kamera_3:
+    source: "dataset/IMG_buzagiTakipYENI/kamera3"
+    type: "local_frames"
+    frame_pattern: "*.jpg"
+    zones_profile: "kamera_3"
+
+  kamera_4:
+    source: "dataset/IMG_buzagiTakipYENI/kamera4"
+    type: "local_frames"
+    frame_pattern: "*.jpg"
+    zones_profile: "kamera_4"
+
+# ===== BÖLGE AYARLARI =====
+zones:
+  file: "data/farm_zones.json"
+
+# ===== TAKİP AYARLARI =====
+tracking:
+  min_duration_seconds: 10    # ai.md 10 Saniye Kuralı
+  fps: 1                      # Frame aralığını temsil eder
+  time_method: "ocr"          # "ocr" (Görüntüden okuma), "filename", veya "fps"
+
+# ===== ÇIKTI AYARLARI =====
+output:
+  csv_path: "output/zone_report.csv"
+  log_level: "INFO"

@@ -5,3 +5,12 @@ __pycache__/
 .idea/
 .venv/
 .venv311/
+
+# Görüntü İşleme Verileri
+GoruntuIsleme/dataset/
+GoruntuIsleme/buzagi_veriseti/
+GoruntuIsleme/output/
+GoruntuIsleme/runs/
+*.pt
+*.engine
+*.csv
