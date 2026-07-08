@@ -162,20 +162,33 @@ def main():
         final_df.to_csv(out_path, index=False, sep=';')
         logger.info(f"Ham analiz raporu kaydedildi: {out_path}")
         
-        # B) Gelişmiş Özet Rapor (ID ve Bölgelere Göre Toplam Dakika)
+        # B) Gelişmiş Özet Rapor (ID ve Bölgelere Göre Toplam Dakika ve Ziyaret Sayısı)
         final_df['duration_minutes'] = final_df['duration_seconds'] / 60.0
-        summary_df = final_df.groupby(['track_id', 'camera', 'zone_name'])['duration_minutes'].sum().unstack(fill_value=0).reset_index()
         
-        # Sütun isimlerini okunabilir yap (Örn: Yemlik -> Yemlik_dakika)
-        new_cols = {}
-        for col in summary_df.columns:
-            if col not in ['track_id', 'camera']:
-                new_cols[col] = f"{col}_dakika"
-        summary_df.rename(columns=new_cols, inplace=True)
+        # Hem süreleri (sum) hem de ziyaret sayılarını (count) hesapla
+        agg_df = final_df.groupby(['track_id', 'camera', 'zone_name']).agg(
+            toplam_sure=('duration_minutes', 'sum'),
+            ziyaret_sayisi=('duration_minutes', 'count')
+        ).reset_index()
+        
+        # Zone'ları sütunlara çevir (Pivot Table)
+        pivot_sure = agg_df.pivot(index=['track_id', 'camera'], columns='zone_name', values='toplam_sure').fillna(0)
+        pivot_sayi = agg_df.pivot(index=['track_id', 'camera'], columns='zone_name', values='ziyaret_sayisi').fillna(0)
+        
+        # Sütun isimlerini belirle (Örn: Yemlik_Ayakta_dakika, Yemlik_Ayakta_ziyaret)
+        pivot_sure.columns = [f"{col}_dakika" for col in pivot_sure.columns]
+        pivot_sayi.columns = [f"{col}_ziyaret" for col in pivot_sayi.columns]
+        
+        # Süre ve Ziyaret tablolarını yan yana birleştir
+        summary_df = pd.concat([pivot_sure, pivot_sayi], axis=1).reset_index()
         
         # Toplam süreyi hesapla
         dakika_sutunlari = [col for col in summary_df.columns if col.endswith('_dakika')]
         summary_df['Toplam_dakika'] = summary_df[dakika_sutunlari].sum(axis=1)
+        
+        # Toplam ziyaret sayısını hesapla
+        ziyaret_sutunlari = [col for col in summary_df.columns if col.endswith('_ziyaret')]
+        summary_df['Toplam_ziyaret'] = summary_df[ziyaret_sutunlari].sum(axis=1)
         
         summary_path = out_path.replace(".csv", "_ozet.csv")
         summary_df.to_csv(summary_path, index=False, sep=';')
