@@ -54,7 +54,13 @@ class ZoneTimeTracker:
             track_id = calf.track_id
             active_ids.add(track_id)
             
-            detected_zone = self._determine_zone(calf.center_point)
+            base_zone = self._determine_zone(calf.center_point)
+            
+            # [YENİ] Bölge adı ile duruşu birleştir (Örn: "Dinlenme_Yatiyor")
+            if base_zone:
+                detected_zone = f"{base_zone}_{calf.pose}"
+            else:
+                detected_zone = None
             
             # Buzağı sisteme ilk defa giriyorsa state nesnesini oluştur
             if track_id not in self.states:

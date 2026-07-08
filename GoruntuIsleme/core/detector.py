@@ -14,6 +14,7 @@ class TrackedCalf:
     bbox: Tuple[int, int, int, int]
     center_point: Tuple[int, int]
     confidence: float
+    pose: str = "ayakta"  # "ayakta" veya "yatiyor"
 
 class CalfDetector:
     """YOLO tabanlı buzağı tespit ve takip (tracking) sınıfı."""
@@ -59,16 +60,27 @@ class CalfDetector:
 
             for box, track_id, conf in zip(boxes, track_ids, confs):
                 x1, y1, x2, y2 = box
-                
                 # Tepeden çekim kamerasında buzağının merkezini hesapla
                 center_x = int((x1 + x2) / 2)
                 center_y = int((y1 + y2) / 2)
+                
+                # [YENİ] En/Boy Oranı (Aspect Ratio) ile Yatıyor/Ayakta tahmini
+                width = x2 - x1
+                height = y2 - y1
+                
+                # Eğer genişlik, yüksekliğin 1.2 katından fazlaysa büyük ihtimalle yatıyordur
+                # (İleride duruma göre bu 1.2 değeri 1.3 veya 1.1 yapılabilir)
+                if width > (height * 1.2):
+                    pose = "Yatiyor"
+                else:
+                    pose = "Ayakta"
                 
                 tracked_calves.append(TrackedCalf(
                     track_id=track_id,
                     bbox=(x1, y1, x2, y2),
                     center_point=(center_x, center_y),
-                    confidence=conf
+                    confidence=conf,
+                    pose=pose
                 ))
 
         return tracked_calves
